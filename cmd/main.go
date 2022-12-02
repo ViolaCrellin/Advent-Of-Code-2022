@@ -32,13 +32,11 @@ func Solve(day int, input string) string {
 	switch day {
 	case 1:
 		return solutions.One(input)
+	case 2:
+		return solutions.Two(input)
 	default:
 		return "Not Yet Implemented"
 	}
-}
-
-func login() {
-	//todo auth
 }
 
 func getPuzzleInputOnline(day int) string {
