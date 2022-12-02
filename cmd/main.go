@@ -1,0 +1,73 @@
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
+
+	"example.com/adventofcode/solutions"
+)
+
+func main() {
+	dayStr := os.Args[1]
+
+	day, err := strconv.Atoi(dayStr)
+	if err != nil {
+		fmt.Println("Error")
+		return
+	}
+
+	input := getPuzzleInputFromFile(day)
+	input = strings.TrimSuffix(input, "\n")
+	answer := Solve(day, input)
+	fmt.Println(answer)
+
+}
+
+func Solve(day int, input string) string {
+	switch day {
+	case 1:
+		return solutions.One(input)
+	default:
+		return "Not Yet Implemented"
+	}
+}
+
+func login() {
+	//todo auth
+}
+
+func getPuzzleInputOnline(day int) string {
+
+	url := fmt.Sprintf("https://adventofcode.com/2021/day/%d/input", day)
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//Convert the body to type string
+	sb := string(body)
+	return sb
+}
+
+func getPuzzleInputFromFile(day int) string {
+	path, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(path)
+	fileName := fmt.Sprintf("../inputs/%d.txt", day)
+	input, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return string(input)
+}
