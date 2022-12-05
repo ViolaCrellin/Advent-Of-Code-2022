@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"unicode"
@@ -81,4 +82,30 @@ func IsLower(s string) bool {
 		}
 	}
 	return true
+}
+
+func GetRegexMapOfNamedCaptureGroupValues(regex *regexp.Regexp, match []string) map[string]string {
+	paramsMap := make(map[string]string)
+	for i, name := range regex.SubexpNames() {
+		if i > 0 && i <= len(match) {
+			paramsMap[name] = match[i]
+		}
+	}
+
+	return paramsMap
+}
+
+func GetRegexMapOfNamedCaptureGroupIntValues(regex *regexp.Regexp, match []string) (map[string]int, error) {
+	paramsMap := make(map[string]int)
+	for i, name := range regex.SubexpNames() {
+		if i > 0 && i <= len(match) {
+			integerVal, err := strconv.Atoi(match[i])
+			if err != nil {
+				return nil, fmt.Errorf("expected to capture an int, did not: %s", match[i])
+			}
+			paramsMap[name] = integerVal
+		}
+	}
+
+	return paramsMap, nil
 }

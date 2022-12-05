@@ -27,3 +27,12 @@ func (s *Stack) Pop() (interface{}, bool) {
 
 	return d, true
 }
+
+func (s *Stack) TopVal() interface{} {
+	if (*s).Top == nil {
+		return nil
+	}
+
+	d := (*s).Top.val
+	return d
+}
