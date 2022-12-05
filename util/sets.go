@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-func Intersection(a []int, b []int) []int {
+func Intersection(a, b []int) []int {
 	m := make(map[int]uint8)
 	for _, k := range a {
 		m[k] |= (1 << 0)
@@ -115,8 +115,8 @@ func MapValues(elements map[interface{}]interface{}) []interface{} {
 }
 
 func InIntSlice(elements []int, element int) bool {
-	for _, b := range elements {
-		if b == element {
+	for i := range elements {
+		if elements[i] == element {
 			return true
 		}
 	}
@@ -124,8 +124,8 @@ func InIntSlice(elements []int, element int) bool {
 }
 
 func InStringSlice(elements []string, element string) bool {
-	for _, v := range elements {
-		if v == element {
+	for i := range elements {
+		if elements[i] == element {
 			return true
 		}
 	}
@@ -140,4 +140,46 @@ func GetByteKeyForIntValue(elements map[byte]int, givenValue int) byte {
 		}
 	}
 	return '0'
+}
+
+// Return the slice that results from removing elements in second from the first.
+func Difference(first, second []string) []string {
+	var diff = make(map[string]bool)
+	var out = make([]string, 0)
+
+	if len(first) == 0 {
+		return out
+	} else if len(second) == 0 {
+		return first
+	}
+
+	for i := range second {
+		item := second[i]
+		diff[item] = true
+	}
+
+	for i := range first {
+		item := first[i]
+		if _, ok := diff[item]; !ok {
+			out = append(out, item)
+		}
+	}
+
+	return out
+}
+
+func IntersectionString(a, b []string) (c []string) {
+	m := make(map[string]bool)
+
+	for i := range a {
+		m[a[i]] = true
+	}
+
+	for i := range b {
+		item := b[i]
+		if _, ok := m[item]; ok {
+			c = append(c, item)
+		}
+	}
+	return
 }

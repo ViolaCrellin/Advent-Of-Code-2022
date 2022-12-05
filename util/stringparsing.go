@@ -1,8 +1,10 @@
 package util
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
+	"unicode"
 )
 
 func SliceAtoi(sa []string) ([]int, error) {
@@ -35,4 +37,48 @@ func BuildHistogramOfLetterOccurences(input string) map[string]int {
 	}
 
 	return result
+}
+
+func AlphabetSlice() []string {
+	a := 'a'
+	z := 'z'
+	result := make([]string, 26)
+	idx := 0
+	for i := a; i <= z; i++ {
+		result[idx] = fmt.Sprintf("%c", i)
+		idx++
+	}
+
+	return result
+}
+
+func AlphabetMap() map[string]int {
+	a := 'a'
+	z := 'z'
+	result := make(map[string]int)
+	idx := 0
+	for i := a; i <= z; i++ {
+		idx++
+		result[fmt.Sprintf("%c", i)] = idx
+	}
+
+	return result
+}
+
+func IsUpper(s string) bool {
+	for _, r := range s {
+		if !unicode.IsUpper(r) && unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func IsLower(s string) bool {
+	for _, r := range s {
+		if !unicode.IsLower(r) && unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
 }

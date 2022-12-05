@@ -34,13 +34,16 @@ func Solve(day int, input string) string {
 		return solutions.One(input)
 	case 2:
 		return solutions.Two(input)
+	case 3:
+		return solutions.Three(input)
+	case 4:
+		return solutions.Four(input)
 	default:
 		return "Not Yet Implemented"
 	}
 }
 
 func getPuzzleInputOnline(day int) string {
-
 	url := fmt.Sprintf("https://adventofcode.com/2021/day/%d/input", day)
 	resp, err := http.Get(url)
 	if err != nil {
