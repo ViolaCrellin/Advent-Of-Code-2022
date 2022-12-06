@@ -2,14 +2,9 @@ package solutions
 
 import "fmt"
 
-func Six(input string, part int) string {
+func Six(input string) string {
 	charWindow := input[:1]
 	requiredLength := 4
-	//We can skip to the first 4 we know are sifferent
-	// if part == 2 {
-	// 	input = input[1718:]
-	// 	requiredLength = 14
-	// }
 	answer := ""
 	for i := range input {
 		if i == 0 {
@@ -21,7 +16,6 @@ func Six(input string, part int) string {
 				charWindow = charWindow[j+1:]
 				break
 			}
-			//higher than
 		}
 		charWindow += string(char)
 		if len(charWindow) == requiredLength {
