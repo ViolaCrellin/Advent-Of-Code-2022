@@ -16,6 +16,7 @@ func Seven(input string) string {
 	root := &trees.DoublyLinkedValueNode{
 		Parent:   nil,
 		Id:       "root",
+		Path:     "/",
 		Size:     0,
 		Children: make(map[string]*trees.DoublyLinkedValueNode),
 	}
@@ -77,7 +78,7 @@ func BuildFileStructure(consoleLog []string, node *trees.DoublyLinkedValueNode) 
 						dirChild := &trees.DoublyLinkedValueNode{
 							Parent:   node,
 							Id:       childDir,
-							Path:     fmt.Sprintf("%s.%s", node.Path, childDir),
+							Path:     fmt.Sprintf(`%s/%s`, node.Path, childDir),
 							Size:     0,
 							Children: make(map[string]*trees.DoublyLinkedValueNode),
 						}
