@@ -1,20 +1,29 @@
-package util
+package trees
 
 import (
 	"container/list"
 	"sort"
+
+	"example.com/adventofcode/util"
 )
 
 type Node struct {
 	Id      string
-	IsSmall bool
 	Friends map[string]*Node
 }
 
 type ValueNode struct {
 	Id      string
-	Value   int
+	Value   int //Size?
 	Friends map[string]ValueNode
+}
+
+type DoublyLinkedValueNode struct {
+	Id       string
+	Path     string
+	Size     int //Size?
+	Parent   *DoublyLinkedValueNode
+	Children map[string]*DoublyLinkedValueNode
 }
 
 func DFS(n *Node, array []string, endId string) []string {
@@ -48,7 +57,6 @@ func DFSValue(n *ValueNode, array []string, endId string) []string {
 }
 
 func BFS(n *Node) []*Node {
-
 	//track the visited nodes
 	visited := make(map[string]*Node)
 	// queue of the nodes to visit
@@ -80,7 +88,6 @@ func BFS(n *Node) []*Node {
 }
 
 func AllPathSearch(currentNode *Node, currentPath []*Node, endId string) [][]*Node {
-
 	if currentNode.Id == endId {
 		currentPath = append(currentPath, currentNode)
 		return [][]*Node{currentPath}
@@ -120,7 +127,7 @@ func AllPathSearchValueNodes(currentNode *ValueNode, currentPath []ValueNode, en
 	sortedFriendNodes := SortValueNodesAsc(currentNodeCopy.Friends)
 
 	for _, friendNode := range sortedFriendNodes {
-		if InStringSlice(currentPathStr, friendNode.Id) {
+		if util.InStringSlice(currentPathStr, friendNode.Id) {
 			delete(currentNodeCopy.Friends, friendNode.Id)
 			continue
 		}

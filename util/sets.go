@@ -114,6 +114,15 @@ func MapValues(elements map[interface{}]interface{}) []interface{} {
 	return vals
 }
 
+func MapValuesInt(elements map[string]int) []int {
+	i, vals := 0, make([]int, len(elements))
+	for _, val := range elements {
+		vals[i] = val
+		i++
+	}
+	return vals
+}
+
 func InIntSlice(elements []int, element int) bool {
 	for i := range elements {
 		if elements[i] == element {
@@ -182,4 +191,16 @@ func IntersectionString(a, b []string) (c []string) {
 		}
 	}
 	return
+}
+
+func SumMapValues(input map[string]int, positiveOnly bool) int {
+	result := 0
+	for _, v := range input {
+		if positiveOnly && v < 0 {
+			continue
+		}
+		result += v
+	}
+
+	return result
 }

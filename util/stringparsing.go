@@ -10,12 +10,12 @@ import (
 
 func SliceAtoi(sa []string) ([]int, error) {
 	si := make([]int, 0, len(sa))
-	for _, a := range sa {
-		i, err := strconv.Atoi(a)
+	for i := range sa {
+		x, err := strconv.Atoi(sa[i])
 		if err != nil {
 			return si, err
 		}
-		si = append(si, i)
+		si[i] = x
 	}
 	return si, nil
 }
