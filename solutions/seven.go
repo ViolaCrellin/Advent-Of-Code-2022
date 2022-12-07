@@ -11,8 +11,6 @@ import (
 	"example.com/adventofcode/util/trees"
 )
 
-var all = []*trees.DoublyLinkedValueNode{}
-
 func Seven(input string) string {
 	consoleLog := strings.Split(input, "\n")
 	root := &trees.DoublyLinkedValueNode{
@@ -84,7 +82,6 @@ func BuildFileStructure(consoleLog []string, node *trees.DoublyLinkedValueNode) 
 							Children: make(map[string]*trees.DoublyLinkedValueNode),
 						}
 
-						all = append(all, dirChild)
 						node.Children[childDir] = dirChild
 					}
 				} else {
@@ -94,7 +91,7 @@ func BuildFileStructure(consoleLog []string, node *trees.DoublyLinkedValueNode) 
 					fileName := values["fileName"]
 					fileSize, err := strconv.Atoi(values["fileSize"])
 					if err != nil {
-						//meh
+						// Meh. Go on. Shoot me for not giving a shit about this error. Yeah, that's right Go. I DEFY YOU AND YOUR INSANE ERROR HANDLING RIPPLES OF DOOM.
 					}
 					// Doesnt matter if it already exists or not. We just overwrite it
 					fileChild := &trees.DoublyLinkedValueNode{
@@ -107,7 +104,6 @@ func BuildFileStructure(consoleLog []string, node *trees.DoublyLinkedValueNode) 
 
 					// traverse back up adding this thing's size to all parents
 					CasadeSizeIncrease(fileChild, fileSize)
-					all = append(all, fileChild)
 					node.Children[fileName] = fileChild
 				}
 			}
