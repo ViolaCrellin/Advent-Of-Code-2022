@@ -9,7 +9,7 @@ import (
 )
 
 func SliceAtoi(sa []string) ([]int, error) {
-	si := make([]int, 0, len(sa))
+	si := make([]int, len(sa))
 	for i := range sa {
 		x, err := strconv.Atoi(sa[i])
 		if err != nil {

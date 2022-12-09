@@ -44,6 +44,9 @@ func Solve(day int, input string) string {
 		return solutions.Six(input)
 	case 7:
 		return solutions.Seven(input)
+	case 8:
+		return solutions.Eight(input)
+
 	default:
 		return "Not Yet Implemented"
 	}
