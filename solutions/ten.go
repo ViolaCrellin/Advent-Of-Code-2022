@@ -85,19 +85,19 @@ func mapSpriteLocations(instructions []instruction) [6][40]string {
 			CRT[i][j] = "."
 		}
 	}
-
 	// C for center.
 	C := 1
+	// i for an i makes the whole world blind.
 	i := 0
 	for cycle := 1; i < len(instructions); cycle++ {
-
-		// calculate which pixel is being drawn... ZERO INDEXED
+		// Pixel coords
 		Y := (cycle - 1) / 40
 		X := (cycle - 1) % 40
 
-		// see if the spite's horizontal location overlaps that pixelCol
+		// Does the sprites horizontal location overlap on the X?
 		spriteLeft, spriteRight := C-1, C+1
 		if spriteLeft <= X && spriteRight >= X {
+			// If so MARK IT. #foundIt
 			CRT[Y][X] = "#"
 		}
 
