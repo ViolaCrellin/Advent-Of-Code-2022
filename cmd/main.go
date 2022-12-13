@@ -50,6 +50,8 @@ func Solve(day int, input string) string {
 		return solutions.Nine(input)
 	case 10:
 		return solutions.Ten(input)
+	case 11:
+		return solutions.Eleven(input, 2)
 	case 12:
 		return solutions.Twelve(input, 2)
 	case 13:
