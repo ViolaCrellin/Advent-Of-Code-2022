@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -123,4 +124,10 @@ func SplitLetterAndNumber(input string, delimiter string) (string, int, error) {
 	}
 
 	return split[1], integerVal, nil
+}
+
+func ParseStringIntSliceRepresentationJSON(input string) []interface{} {
+	var output []interface{}
+	json.Unmarshal([]byte(input), &output)
+	return output
 }

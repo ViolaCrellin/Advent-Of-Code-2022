@@ -36,3 +36,20 @@ func (s *Stack) TopVal() interface{} {
 	d := (*s).Top.val
 	return d
 }
+
+func (s *Stack) Len() int {
+	current := s.Top
+	len := 0
+	if current == nil {
+		return len
+	}
+
+	for {
+		if current.next == nil {
+			return len
+		}
+
+		len++
+		current = current.next
+	}
+}
