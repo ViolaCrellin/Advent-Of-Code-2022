@@ -50,7 +50,6 @@ func findSumOfSignalStrengths(instructions []instruction) int {
 	X := 1
 	sum := 0
 	for cycle := 1; cycle <= 220; cycle++ {
-
 		if (cycle-20)%40 == 0 {
 			sum += X * cycle
 		}
