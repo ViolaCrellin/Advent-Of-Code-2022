@@ -29,6 +29,16 @@ func BuildIntMatrixFromString(input string, nextRowDelimiter string, nextColumnD
 	return result
 }
 
+func BuildByteMatrixFromString(input string, nextRowDelimiter string) [][]byte {
+	rows := strings.Split(input, nextRowDelimiter)
+	var result = make([][]byte, len(rows))
+	for i, row := range rows {
+		result[i] = []byte(row)
+	}
+
+	return result
+}
+
 func MultidimensionalSum(input [][]int, positiveOnly bool) int {
 	result := 0
 	for _, row := range input {

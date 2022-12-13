@@ -204,3 +204,10 @@ func SumMapValues(input map[string]int, positiveOnly bool) int {
 
 	return result
 }
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

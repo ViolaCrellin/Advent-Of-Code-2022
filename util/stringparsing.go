@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
@@ -108,4 +109,18 @@ func GetRegexMapOfNamedCaptureGroupIntValues(regex *regexp.Regexp, match []strin
 	}
 
 	return paramsMap, nil
+}
+
+func SplitLetterAndNumber(input string, delimiter string) (string, int, error) {
+	split := strings.Split(input, delimiter)
+	integerVal, err := strconv.Atoi(split[0])
+	if err != nil {
+		integerVal, err := strconv.Atoi(split[1])
+		if err != nil {
+			return "", 0, fmt.Errorf("expected to capture an int, did not: %s", input)
+		}
+		return split[0], integerVal, nil
+	}
+
+	return split[1], integerVal, nil
 }
