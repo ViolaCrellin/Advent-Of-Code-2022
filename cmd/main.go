@@ -48,6 +48,8 @@ func Solve(day int, input string) string {
 		return solutions.Eight(input)
 	case 9:
 		return solutions.Nine(input)
+	case 10:
+		return solutions.Ten(input)
 	case 12:
 		return solutions.Twelve(input, 2)
 	case 13:
