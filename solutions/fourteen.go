@@ -11,8 +11,8 @@ func Fourteen(input string, part int) string {
 	rawRockPaths := strings.Split(input, "\n")
 
 	rockPaths, xMax, yMax, xMin, _ := buildRockPaths(rawRockPaths)
-	yMax += 2
 	if part == 2 {
+		yMax += 2
 		floor := []Coordinates{
 			{
 				x: 0,
@@ -48,7 +48,7 @@ func trickleSand(cave map[Coordinates]bool, drawingOfMap map[Coordinates]string,
 				return count
 			}
 
-			next := trickle(current, cave, yMax)
+			next := trickle(current, cave)
 			//  Dead end
 			if next == nil {
 				if part == 2 && current == start {
@@ -68,10 +68,7 @@ func trickleSand(cave map[Coordinates]bool, drawingOfMap map[Coordinates]string,
 	}
 }
 
-func trickle(p *Coordinates, grid map[Coordinates]bool, yMax int) *Coordinates {
-	if p.y+2 == yMax {
-		return nil
-	}
+func trickle(p *Coordinates, grid map[Coordinates]bool) *Coordinates {
 	if !grid[Coordinates{x: p.x, y: p.y + 1}] {
 		return &Coordinates{x: p.x, y: p.y + 1}
 	} else {
