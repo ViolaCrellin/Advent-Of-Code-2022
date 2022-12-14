@@ -12,6 +12,7 @@ func Fourteen(input string) string {
 
 	rockPaths, xMax, yMax, xMin, _ := buildRockPaths(rawRockPaths)
 	cave := buildCave(rockPaths, xMax-xMin, yMax)
+	cave[0][500-xMin] = "+"
 	drawCave(cave)
 	fmt.Println("\n\n")
 	sandGrains := trickleSand(cave, xMax, xMin, yMax)
@@ -28,7 +29,7 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 		placed := false
 		x := sandStart.x
 		y := sandStart.y
-		for y < yMax+1 {
+		for y+1 < yMax {
 			y++
 			// Until firm ground below
 			if cave[y+1][x] != "." {
@@ -38,7 +39,7 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 				// Try to move diagonally left
 				// space is available and has ground under it and there's no further fall option
 				for {
-					if cave[pathY][pathX] == "#" {
+					if cave[pathY][pathX] != "." {
 						break
 					}
 
@@ -49,9 +50,6 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 					if cave[pathY+1][pathX-1] == "." {
 						down := pathY + 2
 						for {
-							if down == 183 {
-								fmt.Errorf("d")
-							}
 							if down > yMax-1 {
 								break
 							}
@@ -61,12 +59,24 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 							down++
 						}
 
+						if down >= 54 {
+							fmt.Sprintf("debug")
+						}
 						if cave[down][pathX-2] != "." {
+							if down >= 55 && pathX >= 34 {
+								fmt.Sprintf("debug")
+							}
 							cave[down-1][pathX-1] = "o"
 							placed = true
 							break
 						}
 					}
+
+					// else if cave[pathY][pathX-1] == "." {
+					// 	cave[pathY][pathX-1] = "X"
+					// 	placed = true
+					// 	break
+					// }
 
 					pathY++
 					pathX--
@@ -81,7 +91,7 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 				// Try to move diagonally right
 				// space is available and has ground under it
 				for {
-					if cave[pathY][pathX] == "#" {
+					if cave[pathY][pathX] != "." {
 						break
 					}
 
@@ -101,12 +111,20 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 							down++
 						}
 
+						// Further diagonally is blocked
 						if cave[down][pathX+2] != "." {
 							cave[down-1][pathX+1] = "o"
 							placed = true
 							break
 						}
+
 					}
+
+					// else if cave[pathY][pathX+1] == "." {
+					// 	cave[pathY][pathX+1] = "X"
+					// 	placed = true
+					// 	break
+					// }
 
 					pathY++
 					pathX++
@@ -127,7 +145,9 @@ func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
 		if placed {
 			sandGlobs++
 
-			drawCave(cave)
+			if sandGlobs == 381 {
+				drawCave(cave)
+			}
 		} else {
 			break
 		}
@@ -238,5 +258,3 @@ func drawCave(cave [][]string) {
 		fmt.Printf("\n%s", strings.Join(cave[i], ""))
 	}
 }
-
-//24 is the right answer for the example
