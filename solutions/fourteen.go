@@ -7,36 +7,54 @@ import (
 	"example.com/adventofcode/util"
 )
 
-func Fourteen(input string) string {
+func Fourteen(input string, part int) string {
 	rawRockPaths := strings.Split(input, "\n")
 
 	rockPaths, xMax, yMax, xMin, _ := buildRockPaths(rawRockPaths)
-	drawingOfCave, cave := buildCave(rockPaths, xMax-xMin, yMax)
-	drawCave(drawingOfCave)
-	sandGrains := trickleSand(cave, drawingOfCave, yMax, xMax, xMin)
-	drawCave(drawingOfCave)
-	return fmt.Sprintf("/n Part 1: %d", sandGrains)
+	yMax += 2
+	if part == 2 {
+		floor := []Coordinates{
+			{
+				x: 0,
+				y: yMax,
+			},
+			{
+				x: xMax + xMin,
+				y: yMax,
+			},
+		}
+		rockPaths = append(rockPaths, floor)
+	}
+	drawingOfCave, cave := buildCave(rockPaths)
+	drawCave(drawingOfCave, "./day14_before.txt", xMax+xMin, yMax)
+	sandGrains := trickleSand(cave, drawingOfCave, yMax, xMax, xMin, part)
+	drawCave(drawingOfCave, "./day14_after.txt", xMax*xMax, yMax)
+	return fmt.Sprintf("/n Part 1: %d Part 2: %d", sandGrains, sandGrains+1)
 }
 
-func trickleSand(cave map[Coordinates]bool, drawingOfMap map[Coordinates]string, yMax, xMax, xMin int) int {
+func trickleSand(cave map[Coordinates]bool, drawingOfMap map[Coordinates]string, yMax, xMax, xMin, part int) int {
 	count := 0
-	start := Coordinates{x: 500 - xMin, y: 0}
-	drawingOfMap[start] = "+"
+	start := &Coordinates{x: 500, y: 0}
+	drawingOfMap[*start] = "+"
 	for {
-		queue := []*Coordinates{&start}
+		queue := []*Coordinates{start}
 		var current *Coordinates
 
 		for len(queue) > 0 {
 			current, queue = queue[0], queue[1:]
 
-			if current.y > yMax {
+			if part == 1 && current.y > yMax {
 				fmt.Println("trickling away... like my life")
 				return count
 			}
 
-			next := trickle(current, cave)
+			next := trickle(current, cave, yMax)
 			//  Dead end
 			if next == nil {
+				if part == 2 && current == start {
+					return count
+				}
+
 				// Sand stops here
 				drawingOfMap[*current] = "o"
 				cave[*current] = true
@@ -46,18 +64,14 @@ func trickleSand(cave map[Coordinates]bool, drawingOfMap map[Coordinates]string,
 		}
 
 		count++
-		if count == 964 {
-			outputFile, err := util.NewFile(fmt.Sprintf("./output_%d.txt", count)).WithWriteableFile()
-			if err != nil {
-				// Don't make me care.
-			}
-			outputFile.Write([]byte(drawCave(drawingOfMap)))
-		}
-
+		fmt.Println(count)
 	}
 }
 
-func trickle(p *Coordinates, grid map[Coordinates]bool) *Coordinates {
+func trickle(p *Coordinates, grid map[Coordinates]bool, yMax int) *Coordinates {
+	if p.y+2 == yMax {
+		return nil
+	}
 	if !grid[Coordinates{x: p.x, y: p.y + 1}] {
 		return &Coordinates{x: p.x, y: p.y + 1}
 	} else {
@@ -107,18 +121,18 @@ func buildRockPaths(rawRockPaths []string) ([][]Coordinates, int, int, int, int)
 		rockPaths[i] = path
 	}
 
-	// make things fit nicely on the screen
-	for i := range rockPaths {
-		for j := range rockPaths[i] {
-			rockPaths[i][j].x -= xMin
+	// // make things fit nicely on the screen
+	// for i := range rockPaths {
+	// 	for j := range rockPaths[i] {
+	// 		rockPaths[i][j].x = x
 
-		}
-	}
+	// 	}
+	// }
 
 	return rockPaths, xMax, yMax, xMin, yMin
 }
 
-func buildCave(rockPaths [][]Coordinates, xMax, yMax int) (map[Coordinates]string, map[Coordinates]bool) {
+func buildCave(rockPaths [][]Coordinates) (map[Coordinates]string, map[Coordinates]bool) {
 	cave := make(map[Coordinates]string)
 	grid := make(map[Coordinates]bool)
 	for i := range rockPaths {
@@ -174,8 +188,13 @@ func buildCave(rockPaths [][]Coordinates, xMax, yMax int) (map[Coordinates]strin
 	return cave, grid
 }
 
-func drawCave(cave map[Coordinates]string) string {
-	result := util.BuildEmptyStringMatrix(573, 183, ".")
+func drawCave(cave map[Coordinates]string, fileName string, xMax, yMax int) string {
+	outputFile, err := util.NewFile(fileName).WithWriteableFile()
+	if err != nil {
+		// Don't make me care.
+	}
+
+	result := util.BuildEmptyStringMatrix(xMax, yMax, ".")
 	for point, symbol := range cave {
 		result[point.y][point.x] = symbol
 	}
@@ -185,5 +204,6 @@ func drawCave(cave map[Coordinates]string) string {
 		res += fmt.Sprintf("\n%s", strings.Join(result[i], ""))
 	}
 
+	outputFile.Write([]byte(res))
 	return res
 }
