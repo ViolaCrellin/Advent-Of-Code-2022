@@ -11,149 +11,63 @@ func Fourteen(input string) string {
 	rawRockPaths := strings.Split(input, "\n")
 
 	rockPaths, xMax, yMax, xMin, _ := buildRockPaths(rawRockPaths)
-	cave := buildCave(rockPaths, xMax-xMin, yMax)
-	cave[0][500-xMin] = "+"
-	drawCave(cave)
-	fmt.Println("\n\n")
-	sandGrains := trickleSand(cave, xMax, xMin, yMax)
+	drawingOfCave, cave := buildCave(rockPaths, xMax-xMin, yMax)
+	drawCave(drawingOfCave)
+	sandGrains := trickleSand(cave, drawingOfCave, yMax, xMax, xMin)
+	drawCave(drawingOfCave)
 	return fmt.Sprintf("/n Part 1: %d", sandGrains)
 }
 
-func trickleSand(cave [][]string, xMax, xMin, yMax int) int {
-	sandStart := Coordinates{
-		x: 500 - xMin,
-		y: 0,
-	}
-	sandGlobs := 0
+func trickleSand(cave map[Coordinates]bool, drawingOfMap map[Coordinates]string, yMax, xMax, xMin int) int {
+	count := 0
+	start := Coordinates{x: 500 - xMin, y: 0}
+	drawingOfMap[start] = "+"
 	for {
-		placed := false
-		x := sandStart.x
-		y := sandStart.y
-		for y+1 < yMax {
-			y++
-			// Until firm ground below
-			if cave[y+1][x] != "." {
-				pathY := y
-				pathX := x
+		queue := []*Coordinates{&start}
+		var current *Coordinates
 
-				// Try to move diagonally left
-				// space is available and has ground under it and there's no further fall option
-				for {
-					if cave[pathY][pathX] != "." {
-						break
-					}
+		for len(queue) > 0 {
+			current, queue = queue[0], queue[1:]
 
-					if pathY+1 > yMax || pathX-2 < 0 {
-						return sandGlobs
-					}
-
-					if cave[pathY+1][pathX-1] == "." {
-						down := pathY + 2
-						for {
-							if down > yMax-1 {
-								break
-							}
-							if cave[down][pathX-1] != "." {
-								break
-							}
-							down++
-						}
-
-						if down >= 54 {
-							fmt.Sprintf("debug")
-						}
-						if cave[down][pathX-2] != "." {
-							if down >= 55 && pathX >= 34 {
-								fmt.Sprintf("debug")
-							}
-							cave[down-1][pathX-1] = "o"
-							placed = true
-							break
-						}
-					}
-
-					// else if cave[pathY][pathX-1] == "." {
-					// 	cave[pathY][pathX-1] = "X"
-					// 	placed = true
-					// 	break
-					// }
-
-					pathY++
-					pathX--
-				}
-
-				if placed {
-					break
-				}
-
-				pathY = y
-				pathX = x
-				// Try to move diagonally right
-				// space is available and has ground under it
-				for {
-					if cave[pathY][pathX] != "." {
-						break
-					}
-
-					if pathY+1 > yMax || pathX+2 > xMax-xMin {
-						return sandGlobs
-					}
-
-					if cave[pathY+1][pathX+1] == "." {
-						down := pathY + 2
-						for {
-							if down > yMax-1 {
-								break
-							}
-							if cave[down][pathX+1] != "." {
-								break
-							}
-							down++
-						}
-
-						// Further diagonally is blocked
-						if cave[down][pathX+2] != "." {
-							cave[down-1][pathX+1] = "o"
-							placed = true
-							break
-						}
-
-					}
-
-					// else if cave[pathY][pathX+1] == "." {
-					// 	cave[pathY][pathX+1] = "X"
-					// 	placed = true
-					// 	break
-					// }
-
-					pathY++
-					pathX++
-				}
-
-				if placed {
-					break
-				}
-
-				if cave[y][x] == "." {
-					cave[y][x] = "o"
-					placed = true
-					break
-				}
+			if current.y > yMax {
+				fmt.Println("trickling away... like my life")
+				return count
 			}
+
+			next := trickle(current, cave)
+			//  Dead end
+			if next == nil {
+				// Sand stops here
+				drawingOfMap[*current] = "o"
+				cave[*current] = true
+				break
+			}
+			queue = append(queue, next)
 		}
 
-		if placed {
-			sandGlobs++
-
-			if sandGlobs == 381 {
-				drawCave(cave)
+		count++
+		if count == 964 {
+			outputFile, err := util.NewFile(fmt.Sprintf("./output_%d.txt", count)).WithWriteableFile()
+			if err != nil {
+				// Don't make me care.
 			}
-		} else {
-			break
+			outputFile.Write([]byte(drawCave(drawingOfMap)))
+		}
+
+	}
+}
+
+func trickle(p *Coordinates, grid map[Coordinates]bool) *Coordinates {
+	if !grid[Coordinates{x: p.x, y: p.y + 1}] {
+		return &Coordinates{x: p.x, y: p.y + 1}
+	} else {
+		if !grid[Coordinates{x: p.x - 1, y: p.y + 1}] {
+			return &Coordinates{x: p.x - 1, y: p.y + 1}
+		} else if !grid[Coordinates{x: p.x + 1, y: p.y + 1}] {
+			return &Coordinates{x: p.x + 1, y: p.y + 1}
 		}
 	}
-
-	return sandGlobs
+	return nil
 }
 
 func buildRockPaths(rawRockPaths []string) ([][]Coordinates, int, int, int, int) {
@@ -197,18 +111,21 @@ func buildRockPaths(rawRockPaths []string) ([][]Coordinates, int, int, int, int)
 	for i := range rockPaths {
 		for j := range rockPaths[i] {
 			rockPaths[i][j].x -= xMin
+
 		}
 	}
 
 	return rockPaths, xMax, yMax, xMin, yMin
 }
 
-func buildCave(rockPaths [][]Coordinates, xMax, yMax int) [][]string {
-	cave := util.BuildEmptyStringMatrix(xMax, yMax, ".")
+func buildCave(rockPaths [][]Coordinates, xMax, yMax int) (map[Coordinates]string, map[Coordinates]bool) {
+	cave := make(map[Coordinates]string)
+	grid := make(map[Coordinates]bool)
 	for i := range rockPaths {
 		for j := range rockPaths[i] {
 			corner := rockPaths[i][j]
-			cave[corner.y][corner.x] = "#"
+			cave[Coordinates{y: corner.y, x: corner.x}] = "#"
+			grid[Coordinates{y: corner.y, x: corner.x}] = true
 			if j != len(rockPaths[i])-1 {
 				nextCorner := rockPaths[i][j+1]
 
@@ -218,14 +135,16 @@ func buildCave(rockPaths [][]Coordinates, xMax, yMax int) [][]string {
 					if corner.x > nextCorner.x {
 						// spaces left
 						for l := corner.x; l >= nextCorner.x; l-- {
-							cave[nextCorner.y][l] = "#"
+							cave[Coordinates{y: nextCorner.y, x: l}] = "#"
+							grid[Coordinates{y: nextCorner.y, x: l}] = true
 						}
 					}
 
 					// MOVE TO RIGHT
 					if corner.x < nextCorner.x {
 						for r := corner.x; r <= nextCorner.x; r++ {
-							cave[nextCorner.y][r] = "#"
+							cave[Coordinates{y: nextCorner.y, x: r}] = "#"
+							grid[Coordinates{y: nextCorner.y, x: r}] = true
 						}
 					}
 				}
@@ -235,14 +154,16 @@ func buildCave(rockPaths [][]Coordinates, xMax, yMax int) [][]string {
 					// MOVE DOWNWARDS
 					if corner.y > nextCorner.y {
 						for d := corner.y; d >= nextCorner.y; d-- {
-							cave[d][nextCorner.x] = "#"
+							cave[Coordinates{y: d, x: nextCorner.x}] = "#"
+							grid[Coordinates{y: d, x: nextCorner.x}] = true
 						}
 					}
 
 					// MOVE UPWARDS
 					if corner.y < nextCorner.y {
 						for u := corner.y; u <= nextCorner.y; u++ {
-							cave[u][nextCorner.x] = "#"
+							cave[Coordinates{y: u, x: nextCorner.x}] = "#"
+							grid[Coordinates{y: u, x: nextCorner.x}] = true
 						}
 					}
 				}
@@ -250,11 +171,19 @@ func buildCave(rockPaths [][]Coordinates, xMax, yMax int) [][]string {
 		}
 	}
 
-	return cave
+	return cave, grid
 }
 
-func drawCave(cave [][]string) {
-	for i := range cave {
-		fmt.Printf("\n%s", strings.Join(cave[i], ""))
+func drawCave(cave map[Coordinates]string) string {
+	result := util.BuildEmptyStringMatrix(573, 183, ".")
+	for point, symbol := range cave {
+		result[point.y][point.x] = symbol
 	}
+
+	res := ""
+	for i := range result {
+		res += fmt.Sprintf("\n%s", strings.Join(result[i], ""))
+	}
+
+	return res
 }
