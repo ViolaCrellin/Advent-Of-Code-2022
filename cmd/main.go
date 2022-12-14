@@ -56,6 +56,8 @@ func Solve(day int, input string) string {
 		return solutions.Twelve(input, 2)
 	case 13:
 		return solutions.Thirteen(input)
+	case 14:
+		return solutions.Fourteen(input)
 	default:
 		return "Not Yet Implemented"
 	}

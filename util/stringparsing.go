@@ -126,6 +126,19 @@ func SplitLetterAndNumber(input string, delimiter string) (string, int, error) {
 	return split[1], integerVal, nil
 }
 
+func SplitInts(input string, delimiter string) ([]int, error) {
+	split := strings.Split(input, delimiter)
+	result := make([]int, len(split))
+	for i := range split {
+		integerVal, err := strconv.Atoi(split[i])
+		if err != nil {
+			return nil, err
+		}
+		result[i] = integerVal
+	}
+	return result, nil
+}
+
 func ParseStringIntSliceRepresentationJSON(input string) []interface{} {
 	var output []interface{}
 	json.Unmarshal([]byte(input), &output)

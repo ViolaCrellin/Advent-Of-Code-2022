@@ -167,6 +167,23 @@ func BuildEmptyIntMatrix(xMax int, yMax int) [][]int {
 	return result
 }
 
+func BuildEmptyStringMatrix(xMax int, yMax int, blankChar string) [][]string {
+	xMax++
+	yMax++
+	result := make([][]string, yMax)
+	for rowNum, _ := range result {
+		rowContents := make([]string, xMax)
+		if blankChar != "" {
+			for i := range rowContents {
+				rowContents[i] = blankChar
+			}
+		}
+		result[rowNum] = rowContents
+	}
+
+	return result
+}
+
 func BuildEmptyIntSliceMatrix(xMax, yMax, sliceLength int) [][][]int {
 	xMax++
 	yMax++
